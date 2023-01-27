@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_flutter/constant.dart';
 import 'package:user_flutter/models/api_response.dart';
+import 'package:user_flutter/models/tourist_guide.dart';
 import 'package:user_flutter/models/user.dart';
 
 //__login__
@@ -130,6 +131,36 @@ Future<ApiResponse> updateUserDetail(String name, String? image) async {
       case 422:
         final errors = jsonDecode(response.body)['errors'];
         apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.error = unauthorized;
+        break;
+      default:
+        apiResponse.error = somethingWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+  }
+
+  return apiResponse;
+}
+
+//__get all tourist guides__
+Future<ApiResponse> getAllTouristGuide() async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    String token = await getToken();
+
+    final response = await http.get(
+      Uri.parse(allTouristGuidesURL),
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['tourists'];
         break;
       case 401:
         apiResponse.error = unauthorized;
