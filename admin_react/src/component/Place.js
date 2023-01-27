@@ -10,10 +10,11 @@ export default function Place() {
   const { ref } = usePlacesWidget({
     apiKey:"AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek",
     onPlaceSelected: (place) => {
-		let long = place.geometry.location.lat();
-		let Lng = place.geometry.location.lat();
-		document.getElementById('Lat').value = long;
-		document.getElementById('Lng').value = Lng;
+		// let long = place.geometry.location.lat();
+		// let Lng = place.geometry.location.lat();
+    //
+		// document.getElementById('Lat').value = long;
+		// document.getElementById('Lng').value = Lng;
     }
   });
 
@@ -36,8 +37,6 @@ export default function Place() {
                     placeholder="Enter Place name"
                     required="required"
                   />
-                  <input type="text" id="Lat" />
-                  <input type="text" id="Lng" />
                 </div>
                 <div className="form-group" style={{marginTop:"5%"}}>
                   <label
@@ -67,24 +66,30 @@ export default function Place() {
           </div>
         </div>
         <div className="ftco-section my-5">
+        <button
+              onClick={activeDropDown}
+              type="submit"
+              className="btn btn-primary m-2"
+            >
+              Add Place
+            </button>
           <div className="input-group rounded p-3" style={{ zIndex: "0" }}>
             <span className="input-group-text border-0" id="search-addon">
               <i className="bi bi-search"></i>
             </span>
             <input
               type="search"
-              className="form-control rounded"
+              // className="rounded"
               placeholder="Search"
               aria-label="Search"
               aria-describedby="search-addon"
+              style={{
+                width:"80%",
+                borderRadius:"5px",
+                border: "1px solid #3333",
+                paddingLeft:"10px"
+            }}
             />
-            <button
-              onClick={activeDropDown}
-              type="submit"
-              className="btn btn-primary"
-            >
-              Add
-            </button>
           </div>
           <table
             id="example"
