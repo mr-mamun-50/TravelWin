@@ -84,7 +84,7 @@ export default function Place() {
               type="submit"
               className="btn btn-primary"
             >
-              Add
+              Add Place
             </button>
           </div>
           <table

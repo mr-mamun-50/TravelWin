@@ -22,7 +22,6 @@ function App() {
   return (
     <>
       <Header activeCalss={activeClass} title="TravleWin" />
-
       <div className='row'  style={{ width: "100%" }}>
         <BrowserRouter>
           <LeftSideBar />
