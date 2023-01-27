@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:user_flutter/models/nearby_searches.dart';
 import 'dart:convert';
 
 import 'package:uuid/uuid.dart';
@@ -14,11 +16,17 @@ class SearchGuide extends StatefulWidget {
 class _SearchGuideState extends State<SearchGuide> {
   TextEditingController _searchGuideController = TextEditingController();
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+//   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  String apiKey = "AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek";
   bool loading = false;
   var uuid = Uuid();
   String sessionToken = "";
+
+  String radius = "50";
+  String latitude = "";
+  String longitude = "";
+  NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
   List<dynamic> placeSearchList = [];
 
@@ -34,7 +42,6 @@ class _SearchGuideState extends State<SearchGuide> {
 
   //__get place suggestion__
   Future<void> getSuggestion(String input) async {
-    String apiKey = "AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek";
     String baseUrl =
         "https://maps.googleapis.com/maps/api/place/autocomplete/json";
     String request =
@@ -49,6 +56,31 @@ class _SearchGuideState extends State<SearchGuide> {
     } else {
       throw Exception("Failed to load data");
     }
+  }
+
+  Future<void> _comphareLatLng() async {
+    setState(() {
+      loading = true;
+    });
+
+    List<Location> locations =
+        await locationFromAddress(_searchGuideController.text.toString());
+
+    latitude = locations[0].latitude.toString();
+    longitude = locations[0].longitude.toString();
+
+    //__get nearby places__
+    var url = Uri.parse(
+        "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=$radius&key=$apiKey");
+
+    var response = await http.post(url);
+
+    nearbyPlacesResponse =
+        NearbyPlacesResponse.fromJson(jsonDecode(response.body));
+
+    setState(() {
+      //   loading = false;
+    });
   }
 
   @override
@@ -94,12 +126,26 @@ class _SearchGuideState extends State<SearchGuide> {
                                 text: placeSearchList[index]['description']);
 
                             placeSearchList = [];
+                            _comphareLatLng();
                           });
                         },
                       );
                     },
                   ),
                 ),
+
+          //__show nearby places__
+          if (nearbyPlacesResponse.results != null)
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: nearbyPlacesResponse.results!.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                      nearbyPlacesResponse.results![index].name.toString()),
+                );
+              },
+            ),
         ],
       ),
     );

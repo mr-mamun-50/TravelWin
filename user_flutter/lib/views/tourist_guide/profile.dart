@@ -116,7 +116,8 @@ class _GuideProfileState extends State<GuideProfile> {
                           padding: const EdgeInsets.only(left: 10),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.7,
-                            child: Text(guide?.serviceArea ?? ""),
+                            child:
+                                Text(guide?.serviceArea ?? "No service area"),
                           ),
                         ),
                         MaterialButton(
