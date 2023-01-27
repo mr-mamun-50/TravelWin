@@ -21,7 +21,6 @@ export default function Place() {
     <div className="col-md-10 my-2">
       <Animation>
         <div className="row">
-          <h1>---</h1>
           <div className="place-dtl" id="PlaceDtl">
             <div className="col-md-6 mt-3 mx-5">
               <form acceptCharset="UTF-8" encType="multipart/form-data">
