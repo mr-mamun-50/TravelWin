@@ -8,30 +8,42 @@ export default function Place() {
     dtlPlace.classList.toggle("place-dtl-active");
   };
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('');
   const [title, setTitle] = useState(null);
   const [description, setdescription] = useState(null);
+  const [leti, setleti] = useState(null);
+  const [langi, setdelangi] = useState(null);
 
   const fetchData = async () => {
     const url = "http://192.168.137.71:8000/api/user/tourist_spots";
-    await fetch(url).then(res => res.json()).then((data) => {
-      console.log(data.touristSpots[0].name);
-      setTitle(data.touristSpots[0].name);
-      setdescription(data.touristSpots[0].description);
-      setImage(data.touristSpots[0].image);
-    });
+    await fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        let size = data.touristSpots.length;
+        let targettr = document.getElementById("table-data");
+        for (let i = size - 1; i >= 0; i--) {
+          targettr.innerHTML += `<tr><td className="place-image">
+          <img src=${data.touristSpots[i].image} alt="" />
+        </td>
+        <td className="place-description">
+          <h4>${data.touristSpots[i].name}</h4>
+          <p>${data.touristSpots[i].description}</p>
+        </td>`;
+        }
+      });
   };
 
-  const [addimage, setaddimage] = useState("");
+  const [addimage, setaddimage] = useState('');
   const [addtitle, setaddtitle] = useState(null);
   const [adddescription, setadddescriptionn] = useState(null);
-
 
   const data = {
     name: addtitle,
     description: adddescription,
-    image : addimage,
-  }
+    image: addimage,
+    latitude: leti,
+    longitude: langi,
+  };
 
   const dataEdit = async (e) => {
     e.preventDefault();
@@ -43,8 +55,9 @@ export default function Place() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    }).then((data) => {
-        console.log("Success:", );
+    })
+      .then((data) => {
+        console.log("Success:");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -58,11 +71,9 @@ export default function Place() {
   const { ref } = usePlacesWidget({
     apiKey: "AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek",
     onPlaceSelected: (place) => {
-      // let long = place.geometry.location.lat();
-      // let Lng = place.geometry.location.lat();
-      //
-      // document.getElementById('Lat').value = long;
-      // document.getElementById('Lng').value = Lng;
+      setaddtitle(place.formatted_address);
+      setleti(place.geometry.location.lat());
+      setdelangi(place.geometry.location.lng());
     },
   });
 
@@ -72,7 +83,11 @@ export default function Place() {
         <div className="row">
           <div className="place-dtl" id="PlaceDtl">
             <div className="col-md-6 mt-3 mx-5">
-              <form onSubmit={dataEdit} acceptCharset="UTF-8" encType="multipart/form-data">
+              <form
+                onSubmit={dataEdit}
+                acceptCharset="UTF-8"
+                encType="multipart/form-data"
+              >
                 <div className="form-group">
                   <label htmlFor="exampleInputName"> Place Title</label>
 
@@ -112,11 +127,12 @@ export default function Place() {
                 <div className="form-group mt-3">
                   <label className="m-3 my-1">Upload Place Image: </label>
                   <input
+                    id="image"
                     type="file"
                     name="file"
-                    value={addimage}
                     onChange={(e) => {
-                      setaddimage(e.target.value);
+                      setaddimage(e.target.files[0]);
+                      console.log(e.target.files[0])
                     }}
                   />
                 </div>
@@ -164,25 +180,9 @@ export default function Place() {
               <tr>
                 <th>Image</th>
                 <th>Place Details</th>
-                <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td className="place-image">
-                  <img src={image} alt="" />
-                </td>
-                <td className="place-description">
-                  <h4>{title}</h4>
-                  <p>{description}</p>
-                </td>
-                <td className="place-action">
-                  <i className="bi bi-trash"></i>{" "}
-                </td>
-                <td className="place-action">
-                  <i className="bi bi-pencil-square"></i>
-                </td>
-              </tr>
+            <tbody id="table-data">
               <tr>
                 <td className="place-image">
                   <img
