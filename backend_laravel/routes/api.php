@@ -41,6 +41,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [UserController::class, 'logout']);
     Route::get('/user', [UserController::class, 'user']);
     Route::get('/user/all_tourist_guides', [GetAllTouristController::class, 'getAllTourist']);
+
+    Route::post('/user/book_guide', [TouristSpotsController::class, 'guideBooking']);
 });
 Route::resource('/user/tourist_spots', TouristSpotsController::class);
 
@@ -118,4 +120,4 @@ Route::group(['middleware' => ['auth:sanctum', 'abilities:driver']], function ()
 
 // php artisan serve --host 192.168.42.113 --port 8000
 // php artisan serve --host 192.168.137.71 --port 8000
-// php artisan serve --host 10.100.111.34 --port 8000
+// php artisan serve --host 192.168.187.226 --port 8000

@@ -10,6 +10,7 @@ const userRegisterURL = '$baseURL/user/register';
 const userLogOutURL = '$baseURL/user/logout';
 const userURL = '$baseURL/user';
 const allTouristGuidesURL = '$baseURL/user/all_tourist_guides';
+const guideBookingURL = '$baseURL/user/book_guide';
 
 //__Tourist Guide URL's__
 const guideLoginURL = '$baseURL/tourist_guide/login';

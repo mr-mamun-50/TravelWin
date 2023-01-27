@@ -176,6 +176,47 @@ Future<ApiResponse> getAllTouristGuide() async {
   return apiResponse;
 }
 
+//__store booking__
+Future<ApiResponse> storeBooking(
+    String? _date, String? _time, int guideID) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.post(
+      Uri.parse(guideBookingURL),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'date': _date ?? 0,
+        'time': _time ?? 0,
+        'tourist_guide_id': guideID,
+      },
+    );
+
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['msg'];
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.error = unauthorized;
+        break;
+      default:
+        apiResponse.error = somethingWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+  }
+
+  return apiResponse;
+}
+
 //__get token__
 Future<String> getToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();

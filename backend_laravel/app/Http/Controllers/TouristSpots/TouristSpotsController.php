@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\TouristSpots;
 
 use App\Http\Controllers\Controller;
+use App\Models\TouristGuideBooking;
 use App\Models\TouristSpots;
 use Illuminate\Http\Request;
 
@@ -22,13 +23,21 @@ class TouristSpotsController extends Controller
         ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function guideBooking(Request $request)
     {
+        $data = [
+            'tourist_guide_id' => $request->tourist_guide_id,
+            'user_id' => auth()->user()->id,
+            'date' => $request->date,
+            'time' => $request->time,
+            // 'status' => $request->status,
+        ];
+
+        TouristGuideBooking::create($data);
+
+        return response([
+            'message' => 'Successfully booked a guide!'
+        ], 200);
     }
 
     /**

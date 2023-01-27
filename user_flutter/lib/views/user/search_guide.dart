@@ -8,6 +8,7 @@ import 'package:user_flutter/controllers/user_controller.dart';
 import 'package:user_flutter/models/api_response.dart';
 import 'package:user_flutter/models/nearby_searches.dart';
 import 'package:user_flutter/models/tourist_guide.dart';
+import 'package:user_flutter/views/user/guide_profile.dart';
 import 'package:user_flutter/views/welcome.dart';
 import 'dart:convert';
 
@@ -75,10 +76,7 @@ class _SearchGuideState extends State<SearchGuide> {
     if (apiResponse.error == null) {
       setState(() {
         allTouristGuideList = apiResponse.data as List<dynamic>;
-
         loading = false;
-
-        print(allTouristGuideList.first['name']);
       });
     } else if (apiResponse.error == unauthorized) {
       logout().then((value) => {
@@ -188,24 +186,40 @@ class _SearchGuideState extends State<SearchGuide> {
                   child: ListView.builder(
                     itemCount: FinalNearbyGuideList.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: FinalNearbyGuideList[index]
-                                      ['photo'] ==
+                      return Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: FinalNearbyGuideList[index]
+                                        ['photo'] ==
+                                    null
+                                ? const NetworkImage(
+                                    'https://www.pngitem.com/pimgs/m/130-1300253_female-user-icon-png-download-user-image-color.png')
+                                : NetworkImage(
+                                    '$imgURL/profile_pictures/${FinalNearbyGuideList[index]['photo']}',
+                                  ),
+                          ),
+                          title: Text(FinalNearbyGuideList[index]['name']),
+                          subtitle: FinalNearbyGuideList[index]
+                                      ['rent_per_hour'] !=
                                   null
-                              ? const NetworkImage(
-                                  'https://www.pngitem.com/pimgs/m/130-1300253_female-user-icon-png-download-user-image-color.png')
-                              : NetworkImage(
-                                  '$imgURL/profile_pictures/${FinalNearbyGuideList[index]['photo']}'),
+                              ? Text(
+                                  '${FinalNearbyGuideList[index]['rent_per_hour']} BDT/Hour',
+                                  style: TextStyle(color: Colors.red))
+                              : const Text('0',
+                                  style: TextStyle(color: Colors.orangeAccent)),
+                          trailing: Column(
+                            children: [
+                              Icon(Icons.star, color: Colors.orange),
+                              Text("4.7",
+                                  style: TextStyle(color: Colors.black54)),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => GuideProfileUser(
+                                    FinalNearbyGuideList[index]['id'])));
+                          },
                         ),
-                        title: Text(FinalNearbyGuideList[index]['name']),
-                        subtitle: FinalNearbyGuideList[index]
-                                    ['rent_per_hour'] !=
-                                null
-                            ? Text(
-                                '${FinalNearbyGuideList[index]['rent_per_hour']} BDT/Hour',
-                                style: TextStyle(color: Colors.red))
-                            : const Text('0'),
                       );
                     },
                   ),
