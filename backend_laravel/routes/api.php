@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Driver\DriverController;
 use App\Http\Controllers\Guide\GuideController;
 use App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\User\GetAllTouristController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/user/logout', [UserController::class, 'logout']);
     Route::get('/user', [UserController::class, 'user']);
+    Route::get('/user/all_tourist_guides', [GetAllTouristController::class, 'getAllTourist']);
 });
 
 

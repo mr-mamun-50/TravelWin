@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:user_flutter/constant.dart';
+import 'package:user_flutter/controllers/user_controller.dart';
+import 'package:user_flutter/models/api_response.dart';
 import 'package:user_flutter/models/nearby_searches.dart';
+import 'package:user_flutter/models/tourist_guide.dart';
+import 'package:user_flutter/views/welcome.dart';
 import 'dart:convert';
 
 import 'package:uuid/uuid.dart';
@@ -29,6 +34,8 @@ class _SearchGuideState extends State<SearchGuide> {
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
   List<dynamic> placeSearchList = [];
+  List<dynamic> allTouristList = [];
+  List<dynamic> nearbyGuideList = [];
 
   //__Place search__
   void onChange() {
@@ -58,34 +65,69 @@ class _SearchGuideState extends State<SearchGuide> {
     }
   }
 
+  //__get all guide__
+  Future<void> getAllGuide() async {
+    ApiResponse apiResponse = await getAllTouristGuide();
+    if (apiResponse.error == null) {
+      setState(() {
+        allTouristList = apiResponse.data as List<dynamic>;
+
+        loading = false;
+
+        print(allTouristList.first['name']);
+      });
+    } else if (apiResponse.error == unauthorized) {
+      logout().then((value) => {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const Welcome()),
+                (route) => false)
+          });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${apiResponse.error}'),
+      ));
+      setState(() {
+        loading = !loading;
+      });
+    }
+  }
+
+  //__get nearby places__
   Future<void> _comphareLatLng() async {
     setState(() {
       loading = true;
     });
-
     List<Location> locations =
         await locationFromAddress(_searchGuideController.text.toString());
 
     latitude = locations[0].latitude.toString();
     longitude = locations[0].longitude.toString();
-
     //__get nearby places__
     var url = Uri.parse(
         "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=$radius&key=$apiKey");
 
     var response = await http.post(url);
-
     nearbyPlacesResponse =
         NearbyPlacesResponse.fromJson(jsonDecode(response.body));
-
     setState(() {
-      //   loading = false;
+      loading = false;
     });
+
+    for (int i = 0; i < nearbyPlacesResponse.results!.length; i++) {
+      for (int j = 0; j < allTouristList.length; j++) {
+        if (nearbyPlacesResponse.results![i].geometry!.location!.lat!
+                .toDouble()
+                .round() ==
+            double.parse(allTouristList[j]['service_area_lat']).round()) {
+          nearbyGuideList.add(allTouristList[j]['id']);
+        }
+      }
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+    getAllGuide();
     super.initState();
 
     _searchGuideController.addListener(() {
@@ -141,8 +183,7 @@ class _SearchGuideState extends State<SearchGuide> {
               itemCount: nearbyPlacesResponse.results!.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(
-                      nearbyPlacesResponse.results![index].name.toString()),
+                  title: Text(nearbyGuideList[index].toString()),
                 );
               },
             ),
