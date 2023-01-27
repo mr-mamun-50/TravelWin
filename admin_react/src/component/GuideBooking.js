@@ -2,6 +2,10 @@ import React from "react";
 import Animation from "./Animation";
 
 export default function GuideBooking() {
+
+       
+
+
   return (
     <div className="col-md-10 my-2">
         <h2 className="my-2" style={{fontSize:"40px", fontWeight:"500"}}>Guide Details</h2>

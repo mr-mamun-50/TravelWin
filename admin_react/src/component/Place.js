@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Animation from "./Animation";
 import { usePlacesWidget } from "react-google-autocomplete";
 
@@ -7,15 +7,63 @@ export default function Place() {
     var dtlPlace = document.getElementById("PlaceDtl");
     dtlPlace.classList.toggle("place-dtl-active");
   };
+
+  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [description, setdescription] = useState(null);
+
+  const fetchData = async () => {
+    const url = "http://192.168.137.71:8000/api/user/tourist_spots";
+    await fetch(url).then(res => res.json()).then((data) => {
+      console.log(data.touristSpots[0].name);
+      setTitle(data.touristSpots[0].name);
+      setdescription(data.touristSpots[0].description);
+      setImage(data.touristSpots[0].image);
+    });
+  };
+
+  const [addimage, setaddimage] = useState("");
+  const [addtitle, setaddtitle] = useState(null);
+  const [adddescription, setadddescriptionn] = useState(null);
+
+
+  const data = {
+    name: addtitle,
+    description: adddescription,
+    image : addimage,
+  }
+
+  const dataEdit = async (e) => {
+    e.preventDefault();
+    console.log(data);
+    const url = "http://192.168.137.71:8000/api/user/tourist_spots";
+    fetch(url, {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((data) => {
+        console.log("Success:", );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const { ref } = usePlacesWidget({
-    apiKey:"AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek",
+    apiKey: "AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek",
     onPlaceSelected: (place) => {
-		// let long = place.geometry.location.lat();
-		// let Lng = place.geometry.location.lat();
-    //
-		// document.getElementById('Lat').value = long;
-		// document.getElementById('Lng').value = Lng;
-    }
+      // let long = place.geometry.location.lat();
+      // let Lng = place.geometry.location.lat();
+      //
+      // document.getElementById('Lat').value = long;
+      // document.getElementById('Lng').value = Lng;
+    },
   });
 
   return (
@@ -24,21 +72,25 @@ export default function Place() {
         <div className="row">
           <div className="place-dtl" id="PlaceDtl">
             <div className="col-md-6 mt-3 mx-5">
-              <form acceptCharset="UTF-8" encType="multipart/form-data">
+              <form onSubmit={dataEdit} acceptCharset="UTF-8" encType="multipart/form-data">
                 <div className="form-group">
                   <label htmlFor="exampleInputName"> Place Title</label>
 
                   <input
-				  ref={ref}
+                    ref={ref}
                     type="text"
                     name="p_title"
                     className="form-control"
                     id="place-title searchTextField"
                     placeholder="Enter Place name"
                     required="required"
+                    value={addtitle}
+                    onChange={(e) => {
+                      setaddtitle(e.target.value);
+                    }}
                   />
                 </div>
-                <div className="form-group" style={{marginTop:"5%"}}>
+                <div className="form-group" style={{ marginTop: "5%" }}>
                   <label
                     htmlFor="exampleFormControlTextarea1"
                     className="form-label"
@@ -46,6 +98,10 @@ export default function Place() {
                     Place Description
                   </label>
                   <textarea
+                    value={adddescription}
+                    onChange={(e) => {
+                      setadddescriptionn(e.target.value);
+                    }}
                     className="form-control"
                     id="exampleFormControlTextarea1"
                     rows="3"
@@ -55,7 +111,14 @@ export default function Place() {
                 <hr />
                 <div className="form-group mt-3">
                   <label className="m-3 my-1">Upload Place Image: </label>
-                  <input type="file" name="file" />
+                  <input
+                    type="file"
+                    name="file"
+                    value={addimage}
+                    onChange={(e) => {
+                      setaddimage(e.target.value);
+                    }}
+                  />
                 </div>
                 <hr />
                 <button type="submit" className="btn btn-success">
@@ -66,13 +129,13 @@ export default function Place() {
           </div>
         </div>
         <div className="ftco-section my-5">
-        <button
-              onClick={activeDropDown}
-              type="submit"
-              className="btn btn-primary m-2"
-            >
-              Add Place
-            </button>
+          <button
+            onClick={activeDropDown}
+            type="submit"
+            className="btn btn-primary m-2"
+          >
+            Add Place
+          </button>
           <div className="input-group rounded p-3" style={{ zIndex: "0" }}>
             <span className="input-group-text border-0" id="search-addon">
               <i className="bi bi-search"></i>
@@ -84,11 +147,11 @@ export default function Place() {
               aria-label="Search"
               aria-describedby="search-addon"
               style={{
-                width:"80%",
-                borderRadius:"5px",
+                width: "80%",
+                borderRadius: "5px",
                 border: "1px solid #3333",
-                paddingLeft:"10px"
-            }}
+                paddingLeft: "10px",
+              }}
             />
           </div>
           <table
@@ -107,19 +170,11 @@ export default function Place() {
             <tbody>
               <tr>
                 <td className="place-image">
-                  <img
-                    src="https://www.w3schools.com/howto/img_avatar.png"
-                    alt=""
-                  />
+                  <img src={image} alt="" />
                 </td>
                 <td className="place-description">
-                  <h4>Lorem ipsum</h4>
-                  <p>
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Aliquid beatae ipsa eum eveniet assumenda ipsam placeat aut
-                    nam? A reprehenderit error facere eligendi iure saepe? Sequi
-                    laborum nam vero molestiae.
-                  </p>
+                  <h4>{title}</h4>
+                  <p>{description}</p>
                 </td>
                 <td className="place-action">
                   <i className="bi bi-trash"></i>{" "}
