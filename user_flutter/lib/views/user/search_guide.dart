@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
@@ -34,8 +36,10 @@ class _SearchGuideState extends State<SearchGuide> {
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
   List<dynamic> placeSearchList = [];
-  List<dynamic> allTouristList = [];
+  List<dynamic> allTouristGuideList = [];
+  List<dynamic> nearbyGuideID = [];
   List<dynamic> nearbyGuideList = [];
+  List<dynamic> FinalNearbyGuideList = [];
 
   //__Place search__
   void onChange() {
@@ -70,11 +74,11 @@ class _SearchGuideState extends State<SearchGuide> {
     ApiResponse apiResponse = await getAllTouristGuide();
     if (apiResponse.error == null) {
       setState(() {
-        allTouristList = apiResponse.data as List<dynamic>;
+        allTouristGuideList = apiResponse.data as List<dynamic>;
 
         loading = false;
 
-        print(allTouristList.first['name']);
+        print(allTouristGuideList.first['name']);
       });
     } else if (apiResponse.error == unauthorized) {
       logout().then((value) => {
@@ -114,15 +118,16 @@ class _SearchGuideState extends State<SearchGuide> {
     });
 
     for (int i = 0; i < nearbyPlacesResponse.results!.length; i++) {
-      for (int j = 0; j < allTouristList.length; j++) {
+      for (int j = 0; j < allTouristGuideList.length; j++) {
         if (nearbyPlacesResponse.results![i].geometry!.location!.lat!
                 .toDouble()
                 .round() ==
-            double.parse(allTouristList[j]['service_area_lat']).round()) {
-          nearbyGuideList.add(allTouristList[j]['id']);
+            double.parse(allTouristGuideList[j]['service_area_lat']).round()) {
+          nearbyGuideList.add(allTouristGuideList[j]);
         }
       }
     }
+    FinalNearbyGuideList = nearbyGuideList.toSet().toList();
   }
 
   @override
@@ -176,17 +181,35 @@ class _SearchGuideState extends State<SearchGuide> {
                   ),
                 ),
 
-          //__show nearby places__
-          if (nearbyPlacesResponse.results != null)
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: nearbyPlacesResponse.results!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(nearbyGuideList[index].toString()),
-                );
-              },
-            ),
+          //__show nearby guides__
+          FinalNearbyGuideList.isEmpty
+              ? const SizedBox()
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: FinalNearbyGuideList.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: FinalNearbyGuideList[index]
+                                      ['photo'] ==
+                                  null
+                              ? const NetworkImage(
+                                  'https://www.pngitem.com/pimgs/m/130-1300253_female-user-icon-png-download-user-image-color.png')
+                              : NetworkImage(
+                                  '$imgURL/profile_pictures/${FinalNearbyGuideList[index]['photo']}'),
+                        ),
+                        title: Text(FinalNearbyGuideList[index]['name']),
+                        subtitle: FinalNearbyGuideList[index]
+                                    ['rent_per_hour'] !=
+                                null
+                            ? Text(
+                                '${FinalNearbyGuideList[index]['rent_per_hour']} BDT/Hour',
+                                style: TextStyle(color: Colors.red))
+                            : const Text('0'),
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
