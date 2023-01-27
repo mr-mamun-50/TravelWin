@@ -34,13 +34,13 @@ export default function Place() {
                     name="p_title"
                     className="form-control"
                     id="place-title searchTextField"
-                    placeholder="Enter your name and surname"
+                    placeholder="Enter Place name"
                     required="required"
                   />
                   <input type="text" id="Lat" hidden/>
                   <input type="text" id="Lng" hidden/>
                 </div>
-                <div className="form-group">
+                <div className="form-group" style={{marginTop:"5%"}}>
                   <label
                     htmlFor="exampleFormControlTextarea1"
                     className="form-label"
@@ -51,7 +51,7 @@ export default function Place() {
                     className="form-control"
                     id="exampleFormControlTextarea1"
                     rows="3"
-                    placeholder="Start From here...."
+                    placeholder="Place Description...."
                   ></textarea>
                 </div>
                 <hr />
