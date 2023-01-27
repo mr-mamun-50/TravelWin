@@ -1,5 +1,4 @@
 import React from "react";
-A
 export default function DataTable() {
     return (
         <>

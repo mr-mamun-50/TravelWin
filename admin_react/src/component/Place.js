@@ -1,6 +1,5 @@
 import React from "react";
 import Animation from "./Animation";
-import Autocomplete from "react-google-autocomplete";
 import { usePlacesWidget } from "react-google-autocomplete";
 
 export default function Place() {
@@ -12,7 +11,7 @@ export default function Place() {
     apiKey:"AIzaSyBCcDhyZ9Fqi1X3HxUbcYqoVf2jBU8Jfek",
     onPlaceSelected: (place) => {
 		let long = place.geometry.location.lat();
-		let Lng = place.geometry.location.lng();
+		let Lng = place.geometry.location.lat();
 		document.getElementById('Lat').value = long;
 		document.getElementById('Lng').value = Lng;
     }
@@ -37,8 +36,8 @@ export default function Place() {
                     placeholder="Enter your name and surname"
                     required="required"
                   />
-                  <input type="text" id="Lat" hidden/>
-                  <input type="text" id="Lng" hidden/>
+                  <input type="text" id="Lat" />
+                  <input type="text" id="Lng" />
                 </div>
                 <div className="form-group">
                   <label
@@ -84,7 +83,7 @@ export default function Place() {
               type="submit"
               className="btn btn-primary"
             >
-              Add Place
+              Add
             </button>
           </div>
           <table
