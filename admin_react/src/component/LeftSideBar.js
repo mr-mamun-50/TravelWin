@@ -19,10 +19,12 @@ export default function LeftSideBar(props) {
                         <i className="bi bi-map"></i>
                         <span>Tourist Place</span>
                     </div></NavLink>
-                <div className="menu-iteam">
+                    <NavLink to="/guide">
+                    <div className="menu-iteam">
                     <i className="bi bi-person"></i>
                     <span>Guid Bookings</span>
                 </div>
+                    </NavLink>
                 <div className="menu-iteam">
                     <i className="bi bi-car-front-fill"></i>
                     <span>Rent Car</span>

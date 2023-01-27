@@ -6,6 +6,7 @@ import SettingAdmin from './component/SettingAdmin'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LeftSideBar from './component/LeftSideBar';
 import Place from './component/Place';
+import GuideBooking from './component/GuideBooking';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route exact path="/" element={<HomeInfo />} />
             <Route exact path="/adminSetting" element={<SettingAdmin />} />
             <Route exact path="/tplace" element={<Place />} />
+            <Route exact path="/guide" element={<GuideBooking />} />
           </Routes>
         </BrowserRouter>
       </div>
