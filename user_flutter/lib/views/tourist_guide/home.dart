@@ -3,6 +3,7 @@ import 'package:user_flutter/constant.dart';
 import 'package:user_flutter/controllers/tourist_guide_controller.dart';
 import 'package:user_flutter/models/api_response.dart';
 import 'package:user_flutter/models/tourist_guide.dart';
+import 'package:user_flutter/views/tourist_guide/bookings_of_guide.dart';
 import 'package:user_flutter/views/tourist_guide/dashboard.dart';
 import 'package:user_flutter/views/tourist_guide/profile.dart';
 import 'package:user_flutter/views/welcome.dart';
@@ -58,9 +59,11 @@ class _TouristGuideHomeState extends State<TouristGuideHome> {
       ),
       body: currentIndex == 0
           ? GuideDashboard()
-          : currentIndex == 3
-              ? GuideProfile()
-              : Container(),
+          : currentIndex == 1
+              ? BookingsOfGuide()
+              : currentIndex == 3
+                  ? GuideProfile()
+                  : Container(),
       //   floatingActionButton: FloatingActionButton(
       //     onPressed: () {},
       //     child: Icon(Icons.explore),

@@ -177,21 +177,17 @@ Future<ApiResponse> getAllTouristGuide() async {
 }
 
 //__store booking__
-Future<ApiResponse> storeBooking(
-    String? _date, String? _time, int guideID) async {
+Future<ApiResponse> storeBooking(String date, String time, int guideID) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
     final response = await http.post(
       Uri.parse(guideBookingURL),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       body: {
-        'date': _date ?? 0,
-        'time': _time ?? 0,
         'tourist_guide_id': guideID,
+        'date': date,
+        'time': time,
       },
     );
 
@@ -211,7 +207,7 @@ Future<ApiResponse> storeBooking(
         break;
     }
   } catch (e) {
-    apiResponse.error = serverError;
+    apiResponse.error = serverError + e.toString();
   }
 
   return apiResponse;

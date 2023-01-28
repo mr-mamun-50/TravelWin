@@ -21,8 +21,6 @@ class _GuideBookingState extends State<GuideBooking> {
 
   //store booking
   void _storeBooking() async {
-    print("Helooooooooooo");
-    print(widget.guideID);
     ApiResponse apiResponse = await storeBooking(_date, _time, widget.guideID);
 
     if (apiResponse.error == null) {
@@ -61,7 +59,7 @@ class _GuideBookingState extends State<GuideBooking> {
               onPressed: () {
                 DatePicker.showDatePicker(context, showTitleActions: true,
                     onConfirm: (date) {
-                  _date = '${date.year}-${date.month}-${date.day}';
+                  _date = date.toString();
                 }, currentTime: DateTime.now(), locale: LocaleType.en);
               },
               color: Colors.grey[300],
@@ -84,7 +82,7 @@ class _GuideBookingState extends State<GuideBooking> {
               onPressed: () {
                 DatePicker.showTime12hPicker(context, showTitleActions: true,
                     onConfirm: (time) {
-                  _time = '${time.hour}:${time.minute}';
+                  _time = time.toString();
                 }, currentTime: DateTime.now(), locale: LocaleType.en);
               },
               color: Colors.grey[300],

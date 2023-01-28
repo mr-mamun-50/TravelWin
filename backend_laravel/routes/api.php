@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/user/logout', [UserController::class, 'logout']);
     Route::get('/user', [UserController::class, 'user']);
+
     Route::get('/user/all_tourist_guides', [GetAllTouristController::class, 'getAllTourist']);
 
     Route::post('/user/book_guide', [TouristSpotsController::class, 'guideBooking']);
